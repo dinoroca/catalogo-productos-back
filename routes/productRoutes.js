@@ -5,7 +5,8 @@ const {
     getProduct,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getProductsUser
 } = require('../controllers/productController');
 const { protect, checkAuth } = require('../middlewares/authMiddleware');
 
@@ -14,6 +15,7 @@ router.get('/', checkAuth, getProducts);
 router.get('/:id', checkAuth, getProduct);
 
 // Rutas protegidas (requieren autenticación)
+router.get('/prods/user', protect, getProductsUser);
 router.post('/', protect, createProduct);
 router.put('/:id', protect, updateProduct);
 router.delete('/:id', protect, deleteProduct);

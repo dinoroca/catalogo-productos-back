@@ -28,6 +28,11 @@ const productSchema = new mongoose.Schema({
         type: Object,
         default: {},
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'El ID del usuario es obligatorio'],
+    },
     createdAt: {
         type: Date,
         default: Date.now,

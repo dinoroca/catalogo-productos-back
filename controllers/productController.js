@@ -47,6 +47,53 @@ const getProducts = async (req, res) => {
 };
 
 /**
+ * @desc    Obtener todos los productos de un usuario
+ * @route   GET /api/products/user
+ * @access  Obtiene todos los datos del producto
+ */
+const getProductsUser = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const products = await Product.find({ userId: userId });
+
+        // Filtrar los datos según la autenticación
+        const processedProducts = products.map(product => {
+            const productObj = product.toObject();
+
+            // Si el usuario está autenticado, desencriptar el precio
+            if (req.user) {
+                try {
+                    productObj.price = Product.decryptPrice(product.price);
+                } catch (error) {
+                    console.error('Error al desencriptar precio:', error);
+                    productObj.price = null;
+                }
+            } else {
+                // Si no está autenticado, eliminar el campo de precio
+                delete productObj.price;
+            }
+
+            return productObj;
+        });
+
+        res.status(200).json({
+            success: true,
+            count: processedProducts.length,
+            data: processedProducts,
+            isAuthenticated: req.isAuthenticated,
+        });
+    } catch (error) {
+        console.error('Error al obtener productos:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener productos',
+            error: error.message,
+        });
+    }
+};
+
+/**
  * @desc    Obtener un producto por ID
  * @route   GET /api/products/:id
  * @access  Public (pero precio solo visible para usuarios autenticados)
@@ -101,6 +148,7 @@ const getProduct = async (req, res) => {
 const createProduct = async (req, res) => {
     try {
         const { name, description, imageUrl, price, technicalDetails } = req.body;
+        const userId = req.user.id;
 
         // Crear el producto con el precio original sin encriptar
         const product = await Product.create({
@@ -108,6 +156,7 @@ const createProduct = async (req, res) => {
             description,
             imageUrl,
             originalPrice: price,
+            userId,
             price, // Se encriptará automáticamente en el middleware pre-save
             technicalDetails: technicalDetails || {},
         });
@@ -215,6 +264,7 @@ const deleteProduct = async (req, res) => {
 
 module.exports = {
     getProducts,
+    getProductsUser,
     getProduct,
     createProduct,
     updateProduct,
