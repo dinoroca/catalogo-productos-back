@@ -24,8 +24,8 @@ Backend para una aplicación web de catálogo de productos con autenticación de
 
 1. Clonar el repositorio:
 ```bash
-git https://github.com/dinoroca/catalogo-productos-backend.git
-cd catalogo-productos-backend
+git https://github.com/dinoroca/catalogo-productos-back.git
+cd catalogo-productos-back
 ```
 
 2. Instalar dependencias:
