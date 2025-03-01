@@ -92,7 +92,7 @@ const downloadProductPDF = async (req, res) => {
         if (req.isAuthenticated) {
             try {
                 const decryptedPrice = Product.decryptPrice(product.price);
-                doc.fontSize(12).text(`Precio: $${decryptedPrice.toFixed(2)}`);
+                doc.fontSize(12).text(`Precio: S/ ${decryptedPrice.toFixed(2)}`);
                 doc.moveDown(0.5);
             } catch (error) {
                 console.error('Error al desencriptar precio:', error);
